@@ -6,12 +6,12 @@ Created on Sun Nov 15 16:42:30 2020
 """
 
 from keras.models import load_model
-import os
-import cv2
-import numpy as np
-import keras
-import tensorflow as tf
-
+from os import walk, makedirs, rename
+from os.path import abspath, exists, join, isdir, isfile
+from cv2 import imread, resize
+# import numpy as np
+from numpy import ceil, array, argmax
+# import keras
 
 
 import tkinter as tk
@@ -70,6 +70,22 @@ class sortWA:
         #--------------------------------------------------------------------------
         quitButton = tk.Button(self.ui, text='Quit', command=self.quit, width=20)
         quitButton.grid(row=3, column=2, padx=(10,50), pady=20)
+        
+        self.autofill()
+        
+    
+    def autofill(self):
+        files = []
+        for (dirpath, dirnames, filenames) in os.walk("./"):
+            files.extend(filenames)
+            break
+        print(files)
+        if 'sortWA_model.h5' in files:
+            self.ui.model_path = os.path.abspath("sortWA_model.h5")
+            self.modelEntry.insert(0, str(self.ui.model_path))
+        if 'sortWA_categories.txt' in files:
+            self.ui.label_path = os.path.abspath("sortWA_categories.txt")
+            self.labelEntry.insert(0, str(self.ui.label_path))
         
     def quit(self):
         self.ui.quit()
@@ -168,7 +184,7 @@ class sortWA:
         self.ui.model_path = filedialog.askopenfilename(parent=self.ui, initialdir= "./", title='Please select ML model for sorting (.h5)')
         # self.ui.model_path =  "C:/!Kunal/Projects/SortWhatsapp/model-best.h5"
         self.modelEntry.insert(0, self.ui.model_path)        
-        print(self.ui.model_path)
+        # print(self.ui.model_path)
         
     def getLabelPath(self):  
         self.ui.label_path =  filedialog.askopenfilename(parent=self.ui, initialdir= "./", title='Please select categories labels')
@@ -190,7 +206,8 @@ class sortWA:
             self.sortAllImages(self.ui.sourceFolder, self.ui.model_path, self.ui.label_path)
     
     def run(self):        
-            self.ui.mainloop()
+        self.ui.mainloop()
+            
         
             
     
@@ -206,96 +223,3 @@ def main():
 if __name__ == "__main__":
     main()
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# main_win = tkinter.Tk()
-# main_win.geometry("500x300")
-# main_win.sourceFolder = ''
-# e1 = tk.Entry(master)
-
-# main_win.sourceFile = ''
-# def chooseDir():
-#     main_win.sourceFolder =  filedialog.askdirectory(parent=main_win, initialdir= "./", title='Please select a directory')
-
-# b_chooseDir = tkinter.Button(main_win, text = "Chose Folder", width = 20, height = 3, command = chooseDir)
-# b_chooseDir.place(x = 50,y = 50)
-# b_chooseDir.width = 100
-
-
-# def chooseFile():
-#     main_win.sourceFile = filedialog.askopenfilename(parent=main_win, initialdir= "/", title='Please select a directory')
-
-# b_chooseFile = tkinter.Button(main_win, text = "Chose File", width = 20, height = 3, command = chooseFile)
-# b_chooseFile.place(x = 250,y = 50)
-# b_chooseFile.width = 100
-
-# main_win.mainloop()
-# print(main_win.sourceFolder)
-# print(main_win.sourceFile )
-
-
-'''
-folder_path = ui.sourceFolder#"C:\!Kunal\Projects\SortWhatsapp\WithoutFaces"
-
-sortWA_model = load_model("./model-best.h5")
-
-dirs = ["Delete",  "Documents", "Objects", "People", "Scenery", "TextFace"]
-for i in range(len(dirs)):
-    if not os.path.exists(os.path.join(folder_path, dirs[i])):
-        os.makedirs(os.path.join(folder_path, dirs[i]))
-
-
-images_list = []
-
-for (dirpath, dirnames, filenames) in os.walk(folder_path):
-    images_list.extend(filenames)
-    break
-
-all_imgs = []
-start = timer()
-for filename in images_list:
-    # print(os.path.join(folder_path, filename))
-    
-    img = cv2.imread(os.path.join(folder_path, filename))
-    # imgplot = plt.imshow(img)
-    # plt.show()
-    img = cv2.resize(img,(224,224))
-    img = img / 255.0
-    all_imgs.append(img)
-    # img = np.expand_dims(img, axis=0)
-    # print(img.shape)
-    # img = tf.convert_to_tensor(
-    #     img, dtype=None, dtype_hint=None, name=None
-    # )
-    # category = np.argmax(sortWA_model.predict(img))
-    # os.rename(os.path.join(folder_path,filename),os.path.join(folder_path,dirs[category],filename))
-    
-    # print(f"Time elapsed for sorting 1 image is {end - start}, so we can sort {1/(end-start)} images per second")
-    # break
-all_imgs = np.array(all_imgs)
-end = timer()
-print(f"time to convert all image to np array is {end-start}, per second we process {all_imgs.shape[0]/(end-start)}")
-
-
-start = timer()
-categories = np.argmax(sortWA_model.predict(all_imgs),axis=1)
-end = timer()
-print(f"Time elapsed for sorting all images is {end - start}, so we can sort {all_imgs.shape[0]/(end-start)} images per second")
-
-for filename, category in zip(images_list,categories):
-    os.rename(os.path.join(folder_path,filename),os.path.join(folder_path,dirs[category],filename))
-'''
