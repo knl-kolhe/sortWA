@@ -2,7 +2,10 @@
 Repository for my work to sort all whatsapp images into specific categories.
 
 You can download the exe file at this link: https://drive.google.com/file/d/1n1plG2hiEagf5cs6l5CfvTchlwA9XFfc/view?usp=sharing
+
 Additional files (Model and labels) : https://drive.google.com/file/d/1wmRRwy5f2_htsZpB-3u9RNMYJ__eJzr9/view?usp=sharing
+
+Package which you can download together : https://drive.google.com/file/d/12qzZCuoltrGhS0PztX5DixSdSn8uRxBr/view?usp=sharing
 
 
 The program is simple, you accumulate a lot of junk in your day to day usage of WhatsApp. This project attempts to solve that problem, you can just select the folder where
