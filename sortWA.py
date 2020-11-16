@@ -76,15 +76,14 @@ class sortWA:
     
     def autofill(self):
         files = []
-        for (dirpath, dirnames, filenames) in os.walk("./"):
+        for (dirpath, dirnames, filenames) in walk("./"):
             files.extend(filenames)
             break
-        print(files)
         if 'sortWA_model.h5' in files:
-            self.ui.model_path = os.path.abspath("sortWA_model.h5")
+            self.ui.model_path = abspath("sortWA_model.h5")
             self.modelEntry.insert(0, str(self.ui.model_path))
         if 'sortWA_categories.txt' in files:
-            self.ui.label_path = os.path.abspath("sortWA_categories.txt")
+            self.ui.label_path = abspath("sortWA_categories.txt")
             self.labelEntry.insert(0, str(self.ui.label_path))
         
     def quit(self):
@@ -101,13 +100,13 @@ class sortWA:
     
     def create_sortDirs(self):
         for i in range(len(self.dirs)):
-            if not os.path.exists(os.path.join(self.folder_path, self.dirs[i])):
-                os.makedirs(os.path.join(self.folder_path, self.dirs[i]))
+            if not exists(join(self.folder_path, self.dirs[i])):
+                makedirs(join(self.folder_path, self.dirs[i]))
     
     def load_imagesPaths(self):
         self.images_list = []
         
-        for (dirpath, dirnames, filenames) in os.walk(self.folder_path):
+        for (dirpath, dirnames, filenames) in walk(self.folder_path):
             self.images_list.extend(filenames)
             break
         
@@ -122,7 +121,7 @@ class sortWA:
         if total_imgs<number:
             number = total_imgs
         
-        for i in range(int(np.ceil(total_imgs/number))):
+        for i in range(int(ceil(total_imgs/number))):
             start = i*number
             end = (i+1)*number
             if end>total_imgs:
@@ -131,24 +130,24 @@ class sortWA:
             all_imgs = []
             
             for filename in self.images_list[start:end]:
-                img = cv2.imread(os.path.join(self.folder_path, filename))
-                img = cv2.resize(img,(224,224))
+                img = imread(join(self.folder_path, filename))
+                img = resize(img,(224,224))
                 img = img / 255.0
                 all_imgs.append(img)
                 
-            self.processed_images = np.array(all_imgs)
+            self.processed_images = array(all_imgs)
             
             self.sortBatch(self.images_list[start:end])
         tk.messagebox.showinfo(title="Sorting Successful", message="All the images have been sorted")
             
     def sortBatch(self, batch_images_list):
         # start = timer()
-        categories = np.argmax(self.sortWA_model.predict(self.processed_images),axis=1)
+        categories = argmax(self.sortWA_model.predict(self.processed_images),axis=1)
         # end = timer()
         # print(f"Time elapsed for sorting all images is {end - start}, so we can sort {all_imgs.shape[0]/(end-start)} images per second")
         
         for filename, category in zip(batch_images_list,categories):
-            os.rename(os.path.join(self.folder_path,filename),os.path.join(self.folder_path, self.dirs[category], filename))
+            rename(join(self.folder_path,filename), join(self.folder_path, self.dirs[category], filename))
 
     def sortAllImages(self, folder_path, model_path, label_path):
         self.folder_path = folder_path
@@ -196,11 +195,11 @@ class sortWA:
     def sortFolder(self):
         if self.ui.sourceFolder=='' or self.ui.model_path=='' or self.ui.label_path=='':
             tk.messagebox.showerror(title="Set Path", message="Enter all required paths")
-        elif not (os.path.isdir(self.ui.sourceFolder)):
+        elif not (isdir(self.ui.sourceFolder)):
             tk.messagebox.showerror(title="Folder Path does not exist", message="Enter correct folder path")
-        elif not (os.path.isfile(self.ui.model_path)):
+        elif not (isfile(self.ui.model_path)):
             tk.messagebox.showerror(title="Model path does not exist", message="Enter correct model path")
-        elif not (os.path.isfile(self.ui.label_path)):
+        elif not (isfile(self.ui.label_path)):
             tk.messagebox.showerror(title="Label path does not exist", message="Enter correct label path")
         else:
             self.sortAllImages(self.ui.sourceFolder, self.ui.model_path, self.ui.label_path)
