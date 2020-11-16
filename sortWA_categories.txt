@@ -1,0 +1,6 @@
+Delete
+Documents
+Objects
+People
+Scenery
+TextFace
